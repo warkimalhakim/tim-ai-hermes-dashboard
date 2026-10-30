@@ -53,7 +53,7 @@ API_SERVER_PORT=8643
 GITHUB_TOKEN=***  # mask saat tampilkan — tidak push ke repo (.gitignore)
 WP_APP_PASSWORD=***
 WP_USER=warkim
-WP_URL=https://wp.warkim.my.id
+WP_URL=https://example-wp-site.com
 WP_CLIENT_01_APP_PASSWORD=***
 ```
 
@@ -74,7 +74,7 @@ pm2 start ecosystem.config.js --name tim-dashboard
 npm start
 ```
 
-Dashboard aktif: `http://localhost:3001` (atau `https://tim.warkim.my.id` via Cloudflare Tunnel).
+Dashboard aktif: `http://localhost:3001` (atau `https://example-dashboard.com` via Cloudflare Tunnel).
 
 ---
 
@@ -96,7 +96,7 @@ Referensi lengkap: `Content/Drafts/prompt-template.md`.
 
 ## Aturan Konten (`SCHEMA.md` — Pipeline Tahap 5)
 
-- **Artikel publish** (`Content/Published/`, WP) **tidak menyertakan** link dashboard (`tim.warkim.my.id`) atau info tim AI (`Cimi`, `manager`, dll).
+- **Artikel publish** (`Content/Published/`, WP) **tidak menyertakan** link dashboard atau info tim AI (`Cimi`, `manager`, dll). (Referensi: `SCHEMA.md` — `Sedang menyiapkan konten ...`)
 - Bagian referensi / sumber diganti teks netral: `> *Sedang menyiapkan konten ...*`.
 - Ini berlaku untuk semua konten yang dihasilkan pipeline (`kanban` → `QA` → `Poster`).
 
@@ -104,9 +104,9 @@ Referensi lengkap: `Content/Drafts/prompt-template.md`.
 
 ## Struktur Data
 
-- `sqlite3` CLI (`sqlite3 -json`) — DB: `/home/mywarkim/.hermes/kanban.db`
-- Vault root: `/home/mywarkim/_agent/vault/` (`Content/Drafts/`, `Content/Published/`, `Knowledge/secrets/`)
-- Profiles: `/home/mywarkim/.hermes/profiles/` (`manager/`, `tim-*/`)
+- `sqlite3` CLI (`sqlite3 -json`) — DB: `.hermes/kanban.db` (lokal)
+- Vault root: `_agent/vault/` (`Content/Drafts/`, `Content/Published/`, `Knowledge/secrets/`)
+- Profiles: `.hermes/profiles/` (`manager/`, `tim-*/`)
 - Log kanban: otomatis tersimpan di DB (`t_253da72c`, `t_c9d00766`, `t_4c17bf0f`).
 
 ---
