@@ -1,0 +1,21 @@
+# Essential / secrets — DO NOT PUSH
+.env
+.env.local
+.env.*.local
+node_modules/
+.next/
+dist/
+build/
+out/
+*.log
+logs/
+
+# Server / infrastructure details — DO NOT PUSH
+/home/mywarkim/
+/home/mywarkim/_agent/
+/home/mywarkim/.hermes/
+/home/mywarkim/.npm-global/
+/home/mywarkim/.pm2/
+/home/mywarkim/.ssh/
+/home/mywarkim/Deploy-*
+/home/mywarkim/agent-browser/
