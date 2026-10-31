@@ -49,6 +49,7 @@ export default function KanbanPage() {
   const [newTitle, setNewTitle] = useState("");
   const [newAssignee, setNewAssignee] = useState("tim-copywritter");
   const [creating, setCreating] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<KanbanTask | null>(null);
 
   async function loadBoard() {
     setLoading(true);
@@ -94,6 +95,7 @@ export default function KanbanPage() {
   }, []);
 
   return (
+    <>
     <div className="p-6 h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">Kanban Board</h1>
@@ -151,10 +153,10 @@ export default function KanbanPage() {
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-muted-foreground">Memuat…</div>
       ) : (
-        <div className="flex-1 overflow-x-auto">
-          <div className="flex gap-6 h-full min-w-[800px]">
+        <div className="flex-1 overflow-y-auto md:overflow-x-auto">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 md:h-full md:min-w-[800px]">
             {columns.map((col) => (
-              <div key={col.id} className="flex-1 bg-card rounded-xl p-4 flex flex-col">
+              <div key={col.id} className="flex-1 bg-card rounded-xl p-4 flex flex-col border border-[rgba(255,255,255,0.06)]">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-semibold flex items-center gap-2">
                     <span className={`h-2.5 w-2.5 rounded-full ${statusColors[col.id] || "bg-gray-400"}`} />
@@ -168,11 +170,11 @@ export default function KanbanPage() {
                     <div className="text-xs text-muted-foreground text-center py-4">Kosong</div>
                   )}
                   {col.tasks.map((task) => (
-                    <Card key={task.id} className="cursor-pointer hover:border-primary transition-colors">
+                    <Card key={task.id} className="cursor-pointer hover:border-primary transition-colors" onClick={() => setSelectedTask(task)}>
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <div className="font-medium text-sm mb-1">{task.title}</div>
+                            <div className="font-medium text-sm mb-1 line-clamp-2">{task.title}</div>
                             <div className="text-xs text-muted-foreground space-y-0.5">
                               {task.assignee && <div>@{task.assignee}</div>}
                               <div>{formatDate(task.created_at)}</div>
@@ -192,5 +194,29 @@ export default function KanbanPage() {
         </div>
       )}
     </div>
+
+    {/* Detail View Modal */}
+    {selectedTask && (
+      <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="glass w-full max-w-lg rounded-2xl mx-4 mb-4 md:mb-0 md:mx-0 p-6 relative shadow-2xl border border-[rgba(255,255,255,0.12)]">
+          <button onClick={() => setSelectedTask(null)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors" aria-label="Tutup">✕</button>
+          <h2 className="text-xl font-bold mb-1">{selectedTask.title}</h2>
+          <div className="text-xs text-muted-foreground mb-4">ID: {selectedTask.id}</div>
+          <div className="space-y-3 text-sm">
+            <div><span className="text-muted-foreground">Assignee:</span> <span className="font-medium">{selectedTask.assignee || "—"}</span></div>
+            <div><span className="text-muted-foreground">Status:</span> <span className="font-medium capitalize">{selectedTask.status}</span></div>
+            <div><span className="text-muted-foreground">Priority:</span> <span className="font-medium">{selectedTask.priority}</span></div>
+            <div><span className="text-muted-foreground">Created:</span> {formatDate(selectedTask.created_at)}</div>
+            {selectedTask.body && (
+              <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.08)]">
+                <span className="text-muted-foreground">Body:</span>
+                <p className="mt-1 text-foreground/90 whitespace-pre-wrap">{selectedTask.body}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
