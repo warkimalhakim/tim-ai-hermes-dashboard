@@ -78,6 +78,53 @@ Dashboard aktif: `http://localhost:3001` (atau `https://example-dashboard.com` v
 
 ---
 
+## Authentication (Login)
+
+Dashboard dilindungi login. Semua halaman & API wajib sesi valid; tanpa sesi → redirect ke `/login`, API balas `401`.
+
+**Penyimpanan:** `data/users.db` (SQLite, `node:sqlite`). Dibuat otomatis saat pertama dipakai. **Tidak di-commit** (`.gitignore`: `data/`, `*.db`).
+
+**Password:** hash `scrypt` (salt acak 16-byte per user, 64-byte derived key), verifikasi constant-time. Tidak ada plaintext.
+
+**Sesi:** cookie `mc_session` — `httpOnly`, `sameSite=lax`, `secure` saat production, TTL 7 hari, disimpan di tabel `sessions` (logout & ganti password mencabut sesi).
+
+**Rate limit:** maksimal 10 percobaan gagal / 5 menit per `username + IP`.
+
+### Menambah user (seeder CLI)
+
+Daftarkan akun langsung di DB lewat CLI:
+
+```bash
+# buat user
+node scripts/seed-user.mjs create <username> <password> --name "Nama" --role admin
+
+# contoh
+node scripts/seed-user.mjs create admin 'rahasia123456' --name "Admin" --role admin
+```
+
+Perintah lain:
+
+```bash
+node scripts/seed-user.mjs list                       # daftar user
+node scripts/seed-user.mjs passwd <username> <baru>   # ganti password + cabut semua sesi
+node scripts/seed-user.mjs delete <username>          # hapus user
+```
+
+Aturan: username `3-32` karakter (`a-z A-Z 0-9 . _ -`), password minimal 8 karakter.
+
+Lokasi DB bisa di-override dengan env `DASHBOARD_DATA_DIR`.
+
+### Alur login
+
+1. Buka dashboard → redirect `/login?next=<halaman>`
+2. Isi username + password → `POST /api/auth/login` set cookie `mc_session`
+3. Setelah sukses kembali ke halaman tujuan
+4. Logout: `POST /api/auth/logout` (tombol Logout di sidebar/topbar)
+
+Endpoint: `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`.
+
+---
+
 ## Pipeline Artikel (`Kanban` → QA → WP Publish)
 
 1. **Draft** (`kanban` `ready`): `Content/Drafts/<topik>.md`

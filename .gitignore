@@ -10,6 +10,12 @@ out/
 *.log
 logs/
 
+# Auth database (berisi hash password user) — JANGAN di-push
+data/
+*.db
+*.db-wal
+*.db-shm
+
 # Server / infrastructure details — DO NOT PUSH
 /home/mywarkim/
 /home/mywarkim/_agent/
